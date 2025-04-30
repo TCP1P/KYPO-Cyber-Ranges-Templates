@@ -1,0 +1,5 @@
+- name: copy dist file to /
+  copy:
+    src: ../files/dist/
+    dest: /
+    

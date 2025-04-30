@@ -1,0 +1,41 @@
+# A simple topology with various boxes in 1 network
+name: attacker2host
+
+hosts:
+
+  - name: attacker
+    base_box:
+      image: munikypo/kali
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 1024
+    
+  - name: server
+    base_box:
+      image: munikypo/debian-10
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 1024
+
+routers: []
+
+wan:
+  name: internet-connection
+  cidr: 100.100.100.0/24
+
+networks:
+  - name: network
+    cidr: 10.10.30.0/24
+
+net_mappings:
+  - host: attacker
+    network: network
+    ip: 10.10.30.6
+
+  - host: server
+    network: network
+    ip: 10.10.30.7
+
+router_mappings: []
+
+groups: []

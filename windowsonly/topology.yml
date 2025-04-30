@@ -1,0 +1,29 @@
+# A simple topology with various boxes in 1 network
+name: attackeronly
+
+hosts:
+  - name: windows
+    base_box:
+      image: munikypo/windows-server-2019
+      mgmt_protocol: winrm
+    flavor: csirtmu.tiny1x4
+    extra:
+      memory: 1024
+routers: []
+
+wan:
+  name: internet-connection
+  cidr: 100.100.100.0/24
+
+networks:
+  - name: network
+    cidr: 10.10.30.0/24
+
+net_mappings:
+  - host: windows
+    network: network
+    ip: 10.10.30.6
+
+router_mappings: []
+
+groups: []

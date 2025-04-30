@@ -1,0 +1,8 @@
+# This is an empty template playbook
+# You can write your custom configuration here
+
+# Installation and configuration of each host
+- name: Configure windows
+  hosts: windows
+  roles:
+    - role: windows

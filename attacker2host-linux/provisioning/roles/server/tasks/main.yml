@@ -1,0 +1,69 @@
+- name: Add the user 'admin' with a bash shell to the user's groups
+  user:
+      name: admin
+      password: "{{ 'admin' | password_hash('sha512') }}"
+      create_home: yes
+      shell: /bin/bash
+
+- name: Adding aliases
+  loop: "{{ aliases | dict2items }}"
+  lineinfile:
+      path: /etc/hosts
+      line: "{{ item.value }} {{ item.key }}"
+
+- name: copy files from app directory
+  copy:
+    src: apps/
+    dest: /home/admin/
+    owner: admin
+    mode: '640'
+
+- name: copy services
+  copy:
+    src: services/
+    dest: /etc/systemd/system/
+    owner: root
+    mode: '640'
+
+- name: Install python3-venv package
+  apt:
+    pkg:
+      - python3-venv
+      - python3
+    state: present
+
+- name: Create Python virtual environment directory
+  file:
+    path: /home/admin/venv
+    state: directory
+    owner: admin
+    group: admin
+    mode: '0755'
+
+- name: Create Python virtual environment
+  command: python3 -m venv /home/admin/venv
+  args:
+    creates: /home/admin/venv/bin/activate
+  become: yes
+
+- name: Fix virtual environment ownership
+  file:
+    path: /home/admin/venv
+    state: directory
+    owner: admin
+    group: admin
+    recurse: yes
+
+- name: Install Python dependencies in virtual environment
+  command: /home/admin/venv/bin/pip install -r /home/admin/requirements.txt
+  become: yes
+
+- name: enable services
+  systemd:
+    name: "{{ item }}"
+    state: started
+  loop:
+    - server
+
+
+

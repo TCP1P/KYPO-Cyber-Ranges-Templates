@@ -1,0 +1,26 @@
+---
+# Basic configuration of all defined devices
+
+# Installation of common tools at all hosts
+- name: Configuring hosts
+  hosts: hosts
+  become: yes
+  roles:
+    - hosts
+
+# Installation and configuration of each host
+- name: Configure attacker
+  hosts: attacker
+  become: true
+  roles:
+    - role: kypo-user-access
+      kypo_user_access_username: user
+      kypo_user_access_password: Password123
+      kypo_user_access_sudo: True
+    - role: attacker
+
+- name: Configure server
+  hosts: server
+  become: true
+  roles:
+    - role: server
